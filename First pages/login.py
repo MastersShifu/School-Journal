@@ -7,14 +7,13 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=invalid-name
 
-from PySide6.QtWidgets import QLineEdit, QWidget, QVBoxLayout, QPushButton, QLabel
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QCursor
+from PyQt5.QtWidgets import QLineEdit, QWidget, QVBoxLayout, QPushButton, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCursor
 import gc
 import sqlite3
-from register import RegisterPage
 
-con = sqlite3.connect("/home/shifu/projects/Journal/tutorial.db")
+con = sqlite3.connect("tutorial.db")
 cursor = con.cursor()
 
 class LoginPage(QWidget):
@@ -25,14 +24,13 @@ class LoginPage(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Journal")
-        self.registration = RegisterPage()
 
         layout = QVBoxLayout()
 
         self.name = QLineEdit()
         self.password = QLineEdit()
 
-        self.label = QLabel() # login error
+        self.label = QLabel()
 
         self.login = QPushButton("Authorization")
         self.regi = QPushButton("Registration")
@@ -55,9 +53,6 @@ class LoginPage(QWidget):
         layout.addWidget(self.login)
         layout.addWidget(self.regi)
 
-        self.login.clicked.connect(self.autorizate)
-        self.regi.clicked.connect(self.register)
-
         self.setLayout(layout)
 
         layout.setAlignment(Qt.AlignCenter)
@@ -65,11 +60,12 @@ class LoginPage(QWidget):
     def autorizate(self):
         cursor.execute("SELECT * FROM acc")
 
-        name = self.name.text()
-        password = self.password.text()
-        password = int(password)
-        print(name)
-        print(password)
+        try:
+            name = self.name.text()
+            password = self.password.text()
+            password = int(password)
+        except ValueError:
+            return
 
         for accaunt in cursor.fetchall():
             if name == accaunt[1]:
@@ -82,10 +78,6 @@ class LoginPage(QWidget):
 
     def prin(self):
         print("asd")
-
-    def register(self):
-        self.registration.resize(400, 500)
-        self.registration.show()
 
     def cabinet(self):
         self.name.hide()
