@@ -7,10 +7,12 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=invalid-name
 
-from PySide6.QtWidgets import QPushButton, QLineEdit, QVBoxLayout, QWidget, QLabel
-from PySide6.QtCore import Qt
+from PyQt5.QtWidgets import QPushButton, QLineEdit, QVBoxLayout, QWidget, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCursor
 import sqlite3
 import re
+
 
 class RegisterPage(QWidget):
     def __init__(self):
@@ -37,6 +39,7 @@ class RegisterPage(QWidget):
         self.f_name.setPlaceholderText("Full name")
 
         self.back_button.setStyleSheet("background-color: transparent; border: none; color: White;")
+        self.back_button.setCursor(QCursor(Qt.PointingHandCursor))
         self.reg_name.setMaxLength(16)
         self.reg_pass.setMaxLength(16)
 
@@ -54,9 +57,6 @@ class RegisterPage(QWidget):
         self.f_name.setFixedSize(200, 40)
         self.reg_button.setFixedSize(200, 50)
 
-        self.reg_button.clicked.connect(self.register)
-        self.back_button.clicked.connect(self.back)
-
         widget = QWidget()
         widget.setLayout(layout)
         self.setLayout(layout)
@@ -65,11 +65,14 @@ class RegisterPage(QWidget):
     def register(self):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         rename = r"^[a-zA-Zа-яА-ЯёЁ]+$"
-        r_n = self.reg_name.text()
-        r_p = self.reg_pass.text()
-        r_p = int(r_p)
-        r_m = self.reg_mail.text()
-        r_f_n = self.f_name.text()
+        try: 
+            r_n = self.reg_name.text()
+            r_p = self.reg_pass.text()
+            r_p = int(r_p)
+            r_m = self.reg_mail.text()
+            r_f_n = self.f_name.text()
+        except ValueError:
+            return
 
         con = sqlite3.connect("/home/shifu/projects/Journal/tutorial.db")
         cursor = con.cursor()
@@ -115,6 +118,3 @@ class RegisterPage(QWidget):
             con.commit()
             con.close()
             self.close()
-
-    def back(self):
-        self.close()
